@@ -1,5 +1,6 @@
 import EcSuppliers from "../models/ec_suppliers";
 import express, {Router, Request, Response} from 'express';
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -28,7 +29,9 @@ router.post("/login", async (req:Request, res:Response) => {
             const foundUser = await EcSuppliers.findOne({where:{e_mail, password}, raw:true});
            
             if(foundUser){
-                return res.status(200).send(`${foundUser.full_name} has Successfully Logged IN\nRegistration ID: ${foundUser.registration_id}`);
+                const token = jwt.sign({user_reg_id: foundUser.registration_id, user_type : user_type}, "your_secret",{expiresIn:"24h"});
+                return res.json({token, registration_id: foundUser.registration_id, user_type: user_type});
+                // return res.status(200).send(`${foundUser.full_name} has Successfully Logged IN\nRegistration ID: ${foundUser.registration_id}`);
             }
             else {
                 return res.status(200).send("User Not Found");
