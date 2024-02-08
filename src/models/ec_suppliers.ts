@@ -1,7 +1,8 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const sequelize = require('../config/sequelize-config'); // Import the Sequelize instance
+import { DataTypes, Sequelize } from 'sequelize';
+import sequelize from '../config/sequelize-config.ts'; // Import the Sequelize instance
+import EcSuppliers from '../../types/modelTypes/ec_suppliers.ts';
 
-const ec_suppliers = sequelize.define('ec_suppliers', {
+EcSuppliers.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -48,6 +49,11 @@ const ec_suppliers = sequelize.define('ec_suppliers', {
     allowNull: false,
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
+},
+{
+  sequelize,
+  modelName: 'ec_suppliers',
+  tableName: 'ec_suppliers',
 });
 
-module.exports = ec_suppliers ;
+export default EcSuppliers ;
