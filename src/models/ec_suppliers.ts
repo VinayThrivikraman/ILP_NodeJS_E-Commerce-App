@@ -1,6 +1,7 @@
 import { DataTypes, Sequelize } from 'sequelize';
 import sequelize from '../config/sequelize-config.ts'; // Import the Sequelize instance
 import EcSuppliers from '../../types/modelTypes/ec_suppliers.ts';
+import bcrypt from 'bcrypt';
 
 EcSuppliers.init({
   id: {
@@ -54,6 +55,13 @@ EcSuppliers.init({
   sequelize,
   modelName: 'ec_suppliers',
   tableName: 'ec_suppliers',
+  hooks: {
+    beforeCreate: (user:EcSuppliers) => {
+      //Hash the pass using bcrypt before creating the record
+      const hashedPassword = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+      user.password = hashedPassword;
+    }
+  }
 });
 
-export default EcSuppliers ;
+export default EcSuppliers;

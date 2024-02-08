@@ -1,6 +1,7 @@
 import EcSuppliers from "../models/ec_suppliers";
 import express, {Router, Request, Response} from 'express';
 import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt';
 
 const router = Router();
 
@@ -26,15 +27,13 @@ router.post("/login", async (req:Request, res:Response) => {
         try{
             console.log("\n\nREACHED LOGIN\n\n")
 
-            const foundUser = await EcSuppliers.findOne({where:{e_mail, password}, raw:true});
-           
-            if(foundUser){
+            const foundUser = await EcSuppliers.findOne({where:{e_mail}, raw:true});
+            if(foundUser && bcrypt.compareSync(password, foundUser.password)) {
                 const token = jwt.sign({user_reg_id: foundUser.registration_id, user_type : user_type}, "your_secret",{expiresIn:"24h"});
-                return res.json({token, registration_id: foundUser.registration_id, user_type: user_type});
-                // return res.status(200).send(`${foundUser.full_name} has Successfully Logged IN\nRegistration ID: ${foundUser.registration_id}`);
+                return res.json({token, user_name: foundUser.full_name, registration_id: foundUser.registration_id, user_type: user_type});
             }
             else {
-                return res.status(200).send("User Not Found");
+                return res.status(401).send("Invalid Credentials");
             }
             
         }
