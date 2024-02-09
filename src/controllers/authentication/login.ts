@@ -16,7 +16,7 @@ const login = async (req: Request, res: Response): Promise<
 
             const foundUser = await EcSuppliers.findOne({where:{e_mail}, raw:true});
             if(foundUser && bcrypt.compareSync(password, foundUser.password)) {
-                const token = jwt.sign({user_reg_id: foundUser.registration_id, user_type : user_type}, "your_secret",{expiresIn:"24h"});
+                const token = jwt.sign({user_reg_id: foundUser.registration_id, user_type : user_type}, "your_secret-key",{expiresIn:"24h"});
                 return res.json({token, user_name: foundUser.full_name, registration_id: foundUser.registration_id, user_type: user_type});
             }
             else {
